@@ -57,7 +57,6 @@ bool GameplayState::Load()
 
 }
 
-// Why does this exist??  Just use Load and skip a step
 void GameplayState::Enter()
 {
 	Load();
@@ -65,42 +64,48 @@ void GameplayState::Enter()
 
 void GameplayState::ProcessInput()
 {
-	int input = _getch();
-	int arrowInput = 0;
+	m_input = _getch();
+	m_arrowInput = 0;
+	
+	// One of the arrow keys were pressed
+	if (m_input == kArrowInput)
+	{
+		m_arrowInput = _getch();
+	}
+	
+	m_hasInput = (m_input != 0) ? true : false;
+}
+
+void GameplayState::MovePlayer()
+{
 	int newPlayerX = m_player.GetXPosition();
 	int newPlayerY = m_player.GetYPosition();
 
-	// One of the arrow keys were pressed
-	if (input == kArrowInput)
-	{
-		arrowInput = _getch();
-	}
-
-	if ((input == kArrowInput && arrowInput == kLeftArrow) ||
-		(char)input == 'A' || (char)input == 'a')
+	if ((m_input == kArrowInput && m_arrowInput == kLeftArrow) ||
+		(char)m_input == 'A' || (char)m_input == 'a')
 	{
 		newPlayerX--;
 	}
-	else if ((input == kArrowInput && arrowInput == kRightArrow) ||
-		(char)input == 'D' || (char)input == 'd')
+	else if ((m_input == kArrowInput && m_arrowInput == kRightArrow) ||
+		(char)m_input == 'D' || (char)m_input == 'd')
 	{
 		newPlayerX++;
 	}
-	else if ((input == kArrowInput && arrowInput == kUpArrow) ||
-		(char)input == 'W' || (char)input == 'w')
+	else if ((m_input == kArrowInput && m_arrowInput == kUpArrow) ||
+		(char)m_input == 'W' || (char)m_input == 'w')
 	{
 		newPlayerY--;
 	}
-	else if ((input == kArrowInput && arrowInput == kDownArrow) ||
-		(char)input == 'S' || (char)input == 's')
+	else if ((m_input == kArrowInput && m_arrowInput == kDownArrow) ||
+		(char)m_input == 'S' || (char)m_input == 's')
 	{
 		newPlayerY++;
 	}
-	else if (input == kEscapeKey)
+	else if (m_input == kEscapeKey)
 	{
 		m_pOwner->LoadScene(StateMachineExampleGame::SceneName::MainMenu);
 	}
-	else if ((char)input == 'Z' || (char)input == 'z')
+	else if ((char)m_input == 'Z' || (char)m_input == 'z')
 	{
 		m_player.DropKey();
 	}
@@ -149,7 +154,8 @@ bool GameplayState::Update(bool processInput)
 	//TODO: write a function to handle input
 	if (processInput && !m_didBeatLevel)
 	{
-		ProcessInput();
+		InputThread(&GameplayState::ProcessInput, this);
+		if (m_hasInput) MovePlayer();
 	}
 
 	CheckBeatLevel();

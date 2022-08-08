@@ -17,12 +17,16 @@ class GameplayState : public GameState
 	Level* m_pLevel;
 
 	bool m_didBeatLevel;
+	bool m_hasInput;
+	int m_input = 0;
+	int m_arrowInput = 0;
 	int m_skipFrameCount;
 	static constexpr int kFramesToSkip = 2;
 
 	int m_currentLevel;
 
 	std::vector<std::string> m_LevelNames;
+	std::thread* m_pInputThread;
 
 public:
 	GameplayState(StateMachineExampleGame* pOwner);
@@ -37,6 +41,7 @@ protected:
 	void CheckBeatLevel();
 
 private:
+	void MovePlayer();
 	void HandleCollision(int newPlayerX, int newPlayerY);
 	bool Load();
 	void DrawHUD(const HANDLE& console);
