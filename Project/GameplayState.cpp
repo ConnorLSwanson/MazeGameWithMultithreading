@@ -154,7 +154,7 @@ bool GameplayState::Update(bool processInput)
 	//TODO: write a function to handle input
 	if (processInput && !m_didBeatLevel)
 	{
-		InputThread(&GameplayState::ProcessInput, this);
+		m_pInputThread = new thread(ProcessInput);
 		if (m_hasInput) MovePlayer();
 	}
 

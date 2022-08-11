@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <vector>
 #include <string>
+#include <thread>
 
 class Level;
 class StateMachineExampleGame;
@@ -26,7 +27,7 @@ class GameplayState : public GameState
 	int m_currentLevel;
 
 	std::vector<std::string> m_LevelNames;
-	std::thread* m_pInputThread;
+	std::thread* m_pInputThread = nullptr;
 
 public:
 	GameplayState(StateMachineExampleGame* pOwner);
